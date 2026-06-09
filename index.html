@@ -1,0 +1,131 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="theme-color" content="#0f766e">
+    <meta name="description" content="المنصة الرقمية للخدمات الصحية - منطقة الوايلي الطبية">
+    <title>المنصة الرقمية للخدمات الصحية - منطقة الوايلي الطبية</title>
+    <link rel="preload" href="assets/images/waili-logo.png" as="image">
+    <link rel="preload" href="assets/images/platform-banner.png" as="image">
+    <link rel="manifest" href="manifest.webmanifest">
+    <link rel="stylesheet" href="assets/css/styles.css">
+  </head>
+  <body>
+    <div class="splash" id="splash" aria-label="شاشة افتتاح المنصة">
+      <div class="splash-stage">
+        <div class="splash-orbit" aria-hidden="true">
+          <span></span><span></span><span></span><span></span>
+        </div>
+        <img class="splash-logo" src="assets/images/waili-logo.png" alt="شعار منطقة الوايلي الطبية">
+      </div>
+      <p>منطقة الوايلي الطبية</p>
+    </div>
+
+    <div class="app-shell">
+      <header class="hero" id="home">
+        <nav class="topbar" aria-label="شريط المنصة">
+          <a class="brand" href="#home" aria-label="الرئيسية">
+            <span>منطقة الوايلي الطبية</span>
+          </a>
+          <button class="icon-button" id="themeToggle" type="button" aria-label="تبديل الوضع الليلي">
+            <span aria-hidden="true">◐</span>
+          </button>
+        </nav>
+
+        <section class="hero-content">
+          <img class="hero-banner" src="assets/images/platform-banner.png" alt="المنصة الرقمية للخدمات الصحية - منطقة الوايلي الطبية">
+
+          <div class="ticker" aria-label="شريط معلومات صحية">
+            <strong>تنبيهات صحية</strong>
+            <div class="ticker-window">
+              <div class="ticker-track">
+                <span>تسجيل المواليد خلال 15 يوم من تاريخ الميلاد</span>
+                <span>تسجيل الوفاة خلال 24 ساعة من حدوثها</span>
+                <span>متابعة مواعيد التطعيمات الأساسية للأطفال</span>
+                <span>تنبيهات الخدمات الصحية ونطاقات المكاتب</span>
+                <span>أخبار الإدارة الصحية وإنجازات الفرق الطبية</span>
+              </div>
+            </div>
+          </div>
+        </section>
+      </header>
+
+      <main>
+        <section class="section services-section" id="services">
+          <div class="section-head">
+            <p class="eyebrow">بوابة الخدمات</p>
+            <h1>اختار الجهة المطلوبة</h1>
+          </div>
+          <div class="unit-grid" id="officeGrid" aria-label="مكاتب الصحة"></div>
+          <div class="soft-divider"><span>رعايات وعيادات</span></div>
+          <div class="unit-grid secondary" id="careGrid" aria-label="الرعايات والعيادات"></div>
+        </section>
+
+        <section class="section updates-section" id="news">
+          <div class="section-head">
+            <p class="eyebrow">تحديثات الإدارة الصحية</p>
+            <h2>آخر الأخبار والتنبيهات</h2>
+            <p>مساحة جاهزة لربط منشورات صفحة فيسبوك أو عرض معاينات مباشرة للبوستات عند توفر الرابط الرسمي.</p>
+          </div>
+          <div class="news-grid" id="newsGrid"></div>
+        </section>
+
+        <section class="section family-section" id="gallery">
+          <div class="family-card">
+            <div class="family-art" aria-hidden="true">
+              <span>♡</span>
+            </div>
+            <div class="family-copy">
+              <p class="eyebrow">لمة العيلة</p>
+              <h2>حكايات بدأت بنبضة</h2>
+              <p>مساحة ألبومات عصرية لصور الفعاليات والتكريمات والذكريات. الصور هنا تتحرك بهدوء، ومع كل ضغطة تفتح تجربة مشاهدة أنيقة.</p>
+              <button class="primary-button" type="button" id="openAlbum">افتحي ألبوم الذكريات</button>
+            </div>
+          </div>
+          <div class="album-strip" id="galleryGrid" aria-label="ألبوم صور لمة العيلة"></div>
+        </section>
+
+        <section class="section assistant-section" id="assistant">
+          <div class="assistant-panel">
+            <div>
+              <p class="eyebrow">المساعد الذكي</p>
+              <h2>اسأل عن الخدمة المناسبة</h2>
+              <p>تم وضع المساعد داخل إطار المنصة، ويمكن استخدامه من نفس الصفحة مع الحفاظ على شكل المنصة وتجربة الموبايل.</p>
+            </div>
+            <iframe class="assistant-frame" title="المساعد الذكي للخدمات الصحية" src="https://dokyy2.github.io/smart-assistant/" loading="lazy"></iframe>
+          </div>
+        </section>
+      </main>
+
+      <footer class="footer-signature">
+        <p>حقوق الملكية لمنطقة الوايلي الطبية - <span>Disgin : Eng Bassem Ashraf</span></p>
+      </footer>
+    </div>
+
+    <div class="workspace" id="workspace" aria-live="polite" hidden>
+      <div class="workspace-backdrop" data-close-workspace></div>
+      <section class="workspace-panel" role="dialog" aria-modal="true" aria-labelledby="workspaceTitle">
+        <button class="close-button" type="button" data-close-workspace aria-label="إغلاق">×</button>
+        <div id="workspaceContent"></div>
+      </section>
+    </div>
+
+    <div class="album-modal" id="albumModal" hidden>
+      <div class="workspace-backdrop" data-close-album></div>
+      <section class="album-viewer" role="dialog" aria-modal="true" aria-label="عارض صور لمة العيلة">
+        <button class="close-button" type="button" data-close-album aria-label="إغلاق">×</button>
+        <button class="album-arrow next" type="button" id="nextPhoto" aria-label="الصورة التالية">›</button>
+        <img id="albumImage" src="assets/images/platform-banner.png" alt="صورة من ألبوم لمة العيلة">
+        <button class="album-arrow prev" type="button" id="prevPhoto" aria-label="الصورة السابقة">‹</button>
+      </section>
+    </div>
+
+    <div class="toast-location" id="locationToast" role="status" aria-live="polite" hidden>
+      <span aria-hidden="true">⌖</span>
+      <p>اضغط على زر اللوكيشن داخل الجهة لإضافة أو فتح الموقع الرسمي.</p>
+    </div>
+
+    <script src="assets/js/app.js"></script>
+  </body>
+</html>
