@@ -1,4 +1,8 @@
-const facebookPageUrl = "https://www.facebook.com/";
+const latestPostUrl = "https://www.facebook.com/sehawaili";
+
+const congratulationsUrl = "https://www.facebook.com/share/p/1Fk5bdv6X9/";
+
+const achievementsUrl = "https://www.facebook.com/share/v/18FU3okutN/";
 
 const officeBaseServices = ["birth", "death", "family-planning", "vaccination-table", "hospitals", "full-guide"];
 
@@ -268,15 +272,33 @@ const platformData = {
     "derma-lab": videoAdvice("تحاليل المعمل", "تحاليل تساعد في دعم تشخيص الطبيب للحالات الجلدية.", "نتيجة التحليل تضيف وضوحًا للخطة العلاجية وتقلل التجربة العشوائية."),
     "derma-physical": videoAdvice("العلاج الطبيعي", "دعم للحالات التي تحتاج جلسات أو إرشادات حركة مرتبطة بالخدمة.", "العلاج الطبيعي جزء من التعافي، وليس خطوة منفصلة عن متابعة الطبيب.")
   },
-  newsItems: [
-    { title: "منشورات صفحة الإدارة", text: "يمكن وضع رابط بوست فيسبوك هنا ليظهر كمعاينة أو يفتح المنشور مباشرة.", tag: "Facebook", href: facebookPageUrl },
-    { title: "تنبيهات الخدمات الصحية", text: "مكان مخصص للتنبيهات السريعة: مواعيد تطعيمات، تعليمات موسمية، أو أخبار مكتب.", tag: "تنبيه", href: facebookPageUrl },
-    { title: "إنجازات منطقة الوايلي", text: "مساحة لعرض الحملات، التكريمات، والقوافل الصحية فور نشرها على الصفحة الرسمية.", tag: "إنجاز", href: facebookPageUrl }
-  ],
+
+newsItems: [
+{
+  title: "📢 آخر منشورات الإدارة",
+  text: "متابعة مستمرة لتطوير الخدمات الصحية والتحول الرقمي لخدمة المواطنين بمنطقة الوايلي الطبية.",
+  tag: "🆕 منشور جديد",
+  href: latestPostUrl
+},
+
+{
+  title: "🎉 تهنئة رسمية",
+  text: "تتقدم منطقة الوايلي الطبية بخالص التهنئة للسيد الأستاذ الدكتور تامر مدكور رئيس قطاع الشئون الصحية بالقاهرة بمناسبة تحقيق المركز الأول في المستهدفات الصحية.",
+  tag: "🏆 تهنئة",
+  href: congratulationsUrl
+},
+
+{
+  title: "⭐ إنجازات منطقة الوايلي",
+  text: "👩‍⚕️ د. غادة الديب:\nهناك أشخاص يعملون في صمت ويبذلون جهداً كبيراً كل يوم دون انتظار كلمة شكر.\nواليوم توقفنا لنقول لهم: شكراً.",
+  tag: "🌟 إنجاز",
+  href: achievementsUrl
+}
+],
   galleryItems: [
-    { title: "حكايات بدأت بنبضة", text: "ألبوم صور الفعاليات والتكريمات", image: "assets/images/platform-banner.png" },
-    { title: "فريق الوايلي", text: "صور جماعية وذكريات العمل", image: "assets/images/waili-logo.png" },
-    { title: "خدماتنا على الأرض", text: "لقطات من الحملات والخدمات", image: "assets/images/platform-banner.png" }
+    { title: "حكايات بدأت بنبضة", text: "ألبوم صور الفعاليات والتكريمات", image: "assets/images/Album 01.jpg" },
+    { title: "فريق الوايلي", text: "صور جماعية وذكريات العمل", image: "assets/images/Album 02.jpg" },
+    { title: "خدماتنا على الأرض", text: "لقطات من الحملات والخدمات", image: "assets/images/Album 03.jpg" }
   ]
 };
 

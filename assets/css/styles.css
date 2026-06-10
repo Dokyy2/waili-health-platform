@@ -89,55 +89,32 @@ a {
   visibility: hidden;
 }
 
-.splash-stage {
-  position: relative;
-  width: min(330px, 82vw);
-  height: min(330px, 82vw);
-  display: grid;
-  place-items: start center;
+.splash-stage{
+  position:relative;
+  display:grid;
+  place-items:center;
 }
 
-.splash-logo {
-  width: min(190px, 48vw);
-  aspect-ratio: 1;
-  margin-top: 4px;
-  object-fit: contain;
-  border-radius: 50%;
-  filter: drop-shadow(0 0 28px rgba(107, 236, 224, 0.38));
-  animation: logoReveal 2600ms ease both;
+.splash-logo{
+  width:min(260px,65vw);
+  aspect-ratio:1;
+  object-fit:contain;
+  filter:
+    drop-shadow(0 0 15px rgba(255,215,0,.4))
+    drop-shadow(0 0 40px rgba(59,130,246,.3));
+  animation: logoReveal 2200ms ease both;
 }
 
-.splash p {
-  margin: -22px 0 0;
-  color: #c9fff4;
-  font-weight: 800;
+.splash p{
+  margin-top:10px;
+  color:#ffffff;
+  font-size:1.3rem;
+  font-weight:800;
+  letter-spacing:.5px;
+  text-shadow:0 0 15px rgba(255,255,255,.3);
   animation: fadeUp 1400ms 800ms ease both;
 }
 
-.splash-orbit {
-  position: absolute;
-  inset: auto 0 0;
-  width: min(300px, 74vw);
-  aspect-ratio: 1;
-  margin-inline: auto;
-  border: 1px solid rgba(125, 232, 214, 0.22);
-  border-radius: 50%;
-  animation: rotate 5s linear infinite;
-}
-
-.splash-orbit span {
-  position: absolute;
-  width: 8px;
-  height: 8px;
-  border-radius: 50%;
-  background: #89fff0;
-  box-shadow: 0 0 18px #89fff0;
-}
-
-.splash-orbit span:nth-child(1) { top: 20%; right: 4%; }
-.splash-orbit span:nth-child(2) { top: 46%; left: -3px; }
-.splash-orbit span:nth-child(3) { bottom: 3%; right: 38%; }
-.splash-orbit span:nth-child(4) { bottom: 22%; right: 12%; }
 
 .app-shell {
   opacity: 0;
@@ -204,7 +181,7 @@ a {
 }
 
 .hero-banner {
-  width: 100%;
+  width: 95%;
   display: block;
   border-radius: 20px;
   object-fit: cover;
@@ -243,7 +220,7 @@ a {
   min-width: max-content;
   color: var(--muted);
   font-weight: 700;
-  animation: ticker 30s linear infinite;
+  animation: ticker 150s linear infinite;
 }
 
 .section {
@@ -535,13 +512,11 @@ body.dark .care-card {
 
 .assistant-frame {
   width: 100%;
-  height: min(72vh, 680px);
-  min-height: 520px;
+  height: 900px;
+  min-height: 900px;
   border: 1px solid var(--line);
   border-radius: var(--radius);
-  background: var(--surface);
 }
-
 .footer-signature {
   padding: 24px 0 34px;
   text-align: center;
