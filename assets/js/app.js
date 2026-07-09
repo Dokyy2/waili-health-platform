@@ -68,6 +68,7 @@ const platformData = {
     {
       id: "child-zaher",
       type: "care",
+      hidden: true,
       title: "رعاية طفل الظاهر",
       subtitle: "تطعيمات وطب أسرة وأسنان ومعمل",
       icon: "♡",
@@ -251,7 +252,9 @@ const platformData = {
       title: "فحص المقبلين على الزواج",
       description: "خدمة وقائية تساعد المقبلين على الزواج على الاطمئنان قبل بداية حياة جديدة.",
       lead: "الفحص مش تعقيد، هو خطوة احترام للحياة الجديدة. كل معلومة تعرفها بدري تحميك وتحمي شريكك وأسرتك المستقبلية.",
-      points: ["استقبال الحالة.", "إجراء الفحوص المطلوبة.", "شرح النتيجة والتوجيه الصحي المناسب."]
+      points: ["استقبال الحالة.", "إجراء الفحوص المطلوبة.", "شرح النتيجة والتوجيه الصحي المناسب."],
+      directUrl: "https://100millionseha.eg/marriage",
+      directLabel: "أماكن فحص المقبلين على الزواج"
     }),
     dentistry: videoAdvice("طب الأسنان", "خدمات كشف وتوجيه وعلاج أسنان داخل الرعاية حسب المتاح.", "وجع الأسنان لا ينتظر. الكشف المبكر يوفر ألمًا ومضاعفات، خصوصًا للأطفال وكبار السن."),
     lab: videoAdvice("المعمل", "تحاليل وخدمات معملية تساعد الطبيب على فهم الحالة بشكل أدق.", "التحليل الصحيح في الوقت الصحيح يختصر طريق العلاج ويمنع التخمين."),
@@ -265,7 +268,12 @@ const platformData = {
       lead: "مش كل مشكلة جلدية تحتاج نفس العلاج. التشخيص الصحيح هو الفرق بين علاج سريع وتعب يتكرر.",
       points: ["كشف وتقييم طبي.", "تدخلات علاجية حسب الحالة.", "إرشاد للعلاج الطبيعي أو المعمل عند الحاجة."]
     }),
-    interventions: videoAdvice("خدمات التدخلات العلاجية", "تدخلات علاجية جلدية حسب تقييم الطبيب وبروتوكول الخدمة.", "التدخل العلاجي قرار طبي، ويتم فقط بعد تقييم الحالة والتأكد من مناسبته."),
+    interventions: adviceService({
+      title: "خدمات التدخلات العلاجية",
+      description: "تدخلات علاجية جلدية حسب تقييم الطبيب وبروتوكول الخدمة.",
+      lead: "التدخل العلاجي قرار طبي، ويتم فقط بعد تقييم الحالة والتأكد من مناسبته.",
+      points: ["اقرأ النبذة بهدوء قبل التوجه للخدمة.", "اسأل الفريق الطبي عن الخطوة المناسبة لحالتك.", "الخدمة تتم بعد تقييم الطبيب داخل العيادة."]
+    }),
     "soft-laser": videoAdvice("كي النقط", "خدمة علاجية دقيقة حسب تقييم الطبيب.", "الإجراء البسيط يحتاج تشخيص مضبوط وتعليمات بعد الخدمة للحفاظ على النتيجة."),
     electrocautery: videoAdvice("حقن الكورتيزون", "خدمة علاجية لبعض الحالات الجلدية حسب تقييم الطبيب.", "الحقن ليس مناسبًا لكل الحالات، لذلك القرار يكون للطبيب بعد الكشف."),
     uvb: videoAdvice("الأشعة فوق البنفسجية", "جلسات لحالات جلدية مزمنة وفق بروتوكول طبي.", "الانتظام والمتابعة هما سر الاستفادة من الجلسات وتقليل الأعراض."),
@@ -294,11 +302,11 @@ newsItems: [
   tag: "🌟 إنجاز",
   href: achievementsUrl
 }
-],
+  ],
   galleryItems: [
-    { title: "حكايات بدأت بنبضة", text: "ألبوم صور الفعاليات والتكريمات", image: "assets/images/Album 01.jpg" },
-    { title: "فريق الوايلي", text: "صور جماعية وذكريات العمل", image: "assets/images/Album 02.jpg" },
-    { title: "خدماتنا على الأرض", text: "لقطات من الحملات والخدمات", image: "assets/images/Album 03.jpg" }
+    { title: "حكايات بدأت بنبضة", text: "ألبوم صور الفعاليات والتكريمات", image: "assets/images/album/photo-01.jpg", fallback: "assets/images/Album 01.jpg" },
+    { title: "فريق الوايلي", text: "صور جماعية وذكريات العمل", image: "assets/images/album/photo-02.jpg", fallback: "assets/images/Album 02.jpg" },
+    { title: "خدماتنا على الأرض", text: "لقطات من الحملات والخدمات", image: "assets/images/album/photo-03.jpg", fallback: "assets/images/Album 03.jpg" }
   ]
 };
 
@@ -329,15 +337,43 @@ const workspaceContent = document.querySelector("#workspaceContent");
 const locationToast = document.querySelector("#locationToast");
 const albumModal = document.querySelector("#albumModal");
 const albumImage = document.querySelector("#albumImage");
+const assistantFloat = document.querySelector("#assistantFloat");
+const assistantModal = document.querySelector("#assistantModal");
+const assistantHint = document.querySelector("#assistantHint");
+const assistantOpen = document.querySelector("#assistantOpen");
+const assistantSection = document.querySelector("#assistant");
+const audioFiles = {
+  birth: "01 تسجيل الميلاد.mp3",
+  "vaccination-table": "02 التطعيمات.mp3",
+  "vaccination-care": "02 التطعيمات.mp3",
+  death: "03 تسجيل الوفاه.mp3",
+  "family-planning": "04 تنمية الاسرة.mp3"
+};
 let locationTimer;
 let toastTimer;
+let assistantHintTimer;
+let assistantHintCycle;
 let activeUnitId = "";
 let activePhoto = 0;
+let albumScale = 1;
+let albumOffsetX = 0;
+let albumOffsetY = 0;
+let albumDragStart = null;
+let albumLastTap = 0;
+let workspaceHistoryOpen = false;
+let albumHistoryOpen = false;
+
+if ("scrollRestoration" in history) history.scrollRestoration = "manual";
+window.scrollTo(0, 0);
+window.addEventListener("pageshow", () => window.scrollTo(0, 0));
+window.addEventListener("beforeunload", () => window.scrollTo(0, 0));
 
 window.addEventListener("load", () => {
+  window.scrollTo(0, 0);
   window.setTimeout(() => {
     document.querySelector("#splash").classList.add("hide");
   }, 3000);
+  startAssistantHintLoop();
 });
 
 document.querySelector("#themeToggle").addEventListener("click", () => {
@@ -355,21 +391,39 @@ document.querySelectorAll("[data-close-album]").forEach((item) => {
 document.querySelector("#openAlbum").addEventListener("click", () => openAlbum(0));
 document.querySelector("#nextPhoto").addEventListener("click", () => movePhoto(1));
 document.querySelector("#prevPhoto").addEventListener("click", () => movePhoto(-1));
+assistantOpen.addEventListener("click", openAssistant);
+document.querySelectorAll("[data-close-assistant]").forEach((item) => {
+  item.addEventListener("click", closeAssistant);
+});
 
 document.addEventListener("keydown", (event) => {
   if (event.key === "Escape") {
     if (!workspace.hidden) closeWorkspace();
     if (!albumModal.hidden) closeAlbum();
+    if (!assistantModal.hidden) closeAssistant();
   }
 });
 
 renderUnits();
 renderNews();
 renderGallery();
+initScrollReveal();
+initAlbumGestures();
+initAssistantFloat();
+
+window.addEventListener("popstate", () => {
+  if (!albumModal.hidden) {
+    closeAlbum({ skipHistory: true });
+    return;
+  }
+  if (!workspace.hidden) {
+    closeWorkspace({ skipHistory: true });
+  }
+});
 
 function renderUnits() {
-  officeGrid.innerHTML = platformData.units.filter((unit) => unit.type === "office").map(unitCard).join("");
-  careGrid.innerHTML = platformData.units.filter((unit) => unit.type === "care").map(unitCard).join("");
+  officeGrid.innerHTML = platformData.units.filter((unit) => unit.type === "office" && !unit.hidden).map(unitCard).join("");
+  careGrid.innerHTML = platformData.units.filter((unit) => unit.type === "care" && !unit.hidden).map(unitCard).join("");
   document.querySelectorAll("[data-unit]").forEach((card) => {
     card.addEventListener("click", () => openUnit(card.dataset.unit));
     card.addEventListener("keydown", (event) => {
@@ -395,20 +449,46 @@ function unitCard(unit) {
 }
 
 function renderNews() {
-  newsGrid.innerHTML = platformData.newsItems.map((item) => `
-    <a class="news-card" href="${item.href}" target="_blank" rel="noopener">
+  const orderedNews = platformData.newsItems.map((item, index) => ({
+    ...item,
+    category: item.category || (index === 1 ? "congratulations" : index === 2 ? "achievement" : "news")
+  })).sort((a, b) => newsOrder(a.category) - newsOrder(b.category));
+  newsGrid.innerHTML = orderedNews.map((item, index) => {
+    const category = item.category;
+    return `
+    <a class="news-card news-${category}" data-news-category="${category}" style="--news-delay: ${index * 1.8}s" href="${item.href}" target="_blank" rel="noopener">
+      <span class="news-icon" aria-hidden="true">${newsIcon(category)}</span>
       <p class="eyebrow">${item.tag}</p>
       <h3>${item.title}</h3>
       <p>${item.text}</p>
       <span>فتح الصفحة</span>
+      ${category === "congratulations" ? `<i class="celebration celebration-one" aria-hidden="true"></i><i class="celebration celebration-two" aria-hidden="true"></i>` : ""}
+      ${category === "achievement" ? `<i class="achievement-glow" aria-hidden="true"></i>` : ""}
     </a>
-  `).join("");
+  `;
+  }).join("");
+  initCongratulations();
+}
+
+function newsOrder(category) {
+  return { congratulations: 0, achievement: 1, news: 2, announcement: 2 }[category] ?? 3;
+}
+
+function newsIcon(category) {
+  return {
+    announcement: "!",
+    achievement: "★",
+    congratulations: "♡",
+    campaign: "●",
+    warning: "!",
+    news: "i"
+  }[category] || "i";
 }
 
 function renderGallery() {
   galleryGrid.innerHTML = platformData.galleryItems.map((item, index) => `
     <button class="gallery-card" type="button" data-photo="${index}">
-      <img src="${item.image}" alt="">
+      <img src="${item.image}" alt="" onerror="this.onerror=null;this.src='${item.fallback || item.image}'">
       <span>
         <strong>${item.title}</strong>
         <small>${item.text}</small>
@@ -433,7 +513,7 @@ function openUnit(unitId) {
         <p>${unit.subtitle}</p>
       </div>
       <button class="location-button" type="button" data-location="${unit.id}">
-        <span aria-hidden="true">⌖</span>
+        <span aria-hidden="true">📍</span>
         ${unit.locationTitle}
       </button>
     </div>
@@ -442,12 +522,12 @@ function openUnit(unitId) {
     </div>
   `;
   openWorkspace();
+  resetWorkspaceScroll();
   workspaceContent.querySelector("[data-location]").addEventListener("click", showLocationToast);
   workspaceContent.querySelectorAll("[data-service]").forEach((button) => {
     button.addEventListener("click", () => openService(button.dataset.service));
   });
   clearTimeout(locationTimer);
-  locationTimer = window.setTimeout(showLocationToast, 7000);
 }
 
 function serviceCard(id, service, unitType) {
@@ -467,12 +547,12 @@ function openService(serviceId) {
   const service = platformData.services[serviceId];
   if (!service) return;
   if (service.kind === "hospitals") return openHospitals();
-  if (service.kind === "prices") return openPrices(service);
-  if (service.kind === "advice") return openAdvice(service);
-  return openOfficial(service);
+  if (service.kind === "prices") return openPrices(service, serviceId);
+  if (service.kind === "advice") return openAdvice(service, serviceId);
+  return openOfficial(service, serviceId);
 }
 
-function openOfficial(service) {
+function openOfficial(service, serviceId) {
   workspaceContent.innerHTML = `
     <article class="service-sheet">
       <div class="sheet-header">
@@ -489,13 +569,33 @@ function openOfficial(service) {
         <p class="eyebrow">مدة الإجراء</p>
         <h3>${service.duration}</h3>
       </div>
-      ${serviceActions(service)}
+      ${serviceActions(service, serviceId)}
     </article>
   `;
   bindBackButton();
+  resetWorkspaceScroll();
 }
 
-function openAdvice(service) {
+function voiceTools(serviceId) {
+  const fileName = audioFiles[serviceId] || `${serviceId}.mp3`;
+  const audioSrc = audioFiles[serviceId] ? `assets/audio/${audioFiles[serviceId]}` : "";
+  return `
+      <button class="voice-action listen-action" type="button" data-listen-service data-audio-src="${audioSrc}" data-audio-name="${fileName}">
+        <span class="listen-symbol" aria-hidden="true">▶</span>
+        استمع للخدمة
+      </button>
+      <button class="voice-action replay-action" type="button" data-replay-service data-audio-src="${audioSrc}" data-audio-name="${fileName}" aria-label="إعادة تشغيل الصوت">
+        <span aria-hidden="true">↺</span>
+        إعادة
+      </button>
+      <button class="voice-action copy-action" type="button" data-copy-service>
+        <span aria-hidden="true">✓</span>
+        نسخ التفاصيل
+      </button>
+  `;
+}
+
+function openAdvice(service, serviceId) {
   workspaceContent.innerHTML = `
     <article class="service-sheet advice-sheet">
       <div class="sheet-header">
@@ -508,17 +608,27 @@ function openAdvice(service) {
         <ul>${service.points.map((point) => `<li>${point}</li>`).join("")}</ul>
         ${service.caution ? `<p class="caution">${service.caution}</p>` : ""}
       </section>
+      ${service.directUrl ? `
+      <section class="video-card direct-card">
+        <a href="${service.directUrl}" target="_blank" rel="noopener">
+          <span class="youtube-mark map-mark">⌖</span>
+          <strong>${service.directLabel || "فتح الرابط الرسمي"}</strong>
+          <small>رابط مباشر للمبادرة الرسمية</small>
+        </a>
+      </section>` : ""}
+      ${service.videoUrl ? `
       <section class="video-card">
-        <a href="${service.videoUrl || "#"}" aria-disabled="${service.videoUrl ? "false" : "true"}">
+        <a href="${service.videoUrl}">
           <span class="youtube-mark">▶</span>
           <strong>فيديو تعريفي</strong>
           <small>يفتح من تطبيق YouTube عند إضافة الرابط الرسمي</small>
         </a>
-      </section>
-      ${serviceActions(service)}
+      </section>` : ""}
+      ${serviceActions(service, serviceId)}
     </article>
   `;
   bindBackButton();
+  resetWorkspaceScroll();
 }
 
 function openHospitals() {
@@ -548,9 +658,10 @@ function openHospitals() {
     </article>
   `;
   bindBackButton();
+  resetWorkspaceScroll();
 }
 
-function openPrices(service) {
+function openPrices(service, serviceId) {
   workspaceContent.innerHTML = `
     <article class="service-sheet">
       <div class="sheet-header">
@@ -568,10 +679,11 @@ function openPrices(service) {
         `).join("")}
       </div>
       <div class="advice-lead"><h3>${service.note}</h3></div>
-      ${serviceActions(service)}
+      ${serviceActions(service, serviceId)}
     </article>
   `;
   bindBackButton();
+  resetWorkspaceScroll();
 }
 
 function infoBlock(title, items, listType) {
@@ -584,30 +696,158 @@ function infoBlock(title, items, listType) {
   `;
 }
 
-function serviceActions(service) {
+function serviceActions(service, serviceId = "") {
   return `
-    <div class="sheet-actions">
-      <a class="primary-button" href="${service.pdf || "#"}" ${!service.pdf || service.pdf === "#" ? "aria-disabled='true'" : "download"}>
-        تحميل الملف الرسمي PDF
+    <div class="sheet-actions ${serviceId ? "voice-tools" : ""}">
+      ${serviceId ? voiceTools(serviceId) : ""}
+      <a class="primary-button" href="${service.pdf || "#"}" ${!service.pdf || service.pdf === "#" ? "aria-disabled='true'" : "target='_blank' rel='noopener'"}>
+        فتح الملف الرسمي PDF
       </a>
       <button class="ghost-button" type="button" data-back>رجوع لخدمات الجهة</button>
+      ${serviceId ? `<p class="voice-status" aria-live="polite"></p>` : ""}
     </div>
   `;
 }
 
 function bindBackButton() {
   workspaceContent.querySelector("[data-back]").addEventListener("click", () => openUnit(activeUnitId));
+  bindVoiceTools();
+}
+
+function bindVoiceTools() {
+  const listenButton = workspaceContent.querySelector("[data-listen-service]");
+  const replayButton = workspaceContent.querySelector("[data-replay-service]");
+  const copyButton = workspaceContent.querySelector("[data-copy-service]");
+  const status = workspaceContent.querySelector(".voice-status");
+  if (!listenButton || !copyButton || !status) return;
+  let audioPlayer;
+  const listenSymbol = listenButton.querySelector(".listen-symbol");
+  const readableText = () => workspaceContent.querySelector(".service-sheet").innerText
+    .replace(/استمع للخدمة|إعادة|نسخ التفاصيل|فتح الملف الرسمي PDF|رجوع لخدمات الجهة/g, "")
+    .trim();
+  const resetListenState = () => {
+    listenButton.classList.remove("is-speaking");
+    if (listenSymbol) listenSymbol.textContent = "▶";
+  };
+  const ensureAudio = (button = listenButton) => {
+    const audioSrc = button.dataset.audioSrc;
+    const audioName = button.dataset.audioName;
+    if (!audioSrc) {
+      status.textContent = `الخدمة جاهزة للصوت. أضف الملف باسم: ${audioName}`;
+      return null;
+    }
+    if (!audioPlayer) {
+      audioPlayer = new Audio(encodeURI(audioSrc));
+      audioPlayer.addEventListener("ended", () => {
+        resetListenState();
+        status.textContent = "انتهى التشغيل.";
+      });
+      audioPlayer.addEventListener("error", () => {
+        resetListenState();
+        status.textContent = `لم يتم العثور على ملف الصوت. اسم الملف المطلوب: ${audioName}`;
+      });
+    }
+    return audioPlayer;
+  };
+  listenButton.addEventListener("click", () => {
+    const player = ensureAudio();
+    if (!player) return;
+    if (!player.paused) {
+      player.pause();
+      resetListenState();
+      status.textContent = "تم إيقاف الصوت مؤقتًا. اضغط مرة أخرى للاستكمال.";
+      return;
+    }
+    listenButton.classList.add("is-speaking");
+    if (listenSymbol) listenSymbol.textContent = "■";
+    status.textContent = player.currentTime > 0 ? "جارٍ استكمال الصوت..." : "جارٍ تشغيل الخدمة صوتيًا...";
+    player.play().catch(() => {
+      resetListenState();
+      status.textContent = "تعذر تشغيل الصوت على هذا المتصفح.";
+    });
+  });
+  replayButton?.addEventListener("click", () => {
+    const player = ensureAudio(replayButton);
+    if (!player) return;
+    player.pause();
+    player.currentTime = 0;
+    listenButton.classList.add("is-speaking");
+    if (listenSymbol) listenSymbol.textContent = "■";
+    status.textContent = "إعادة تشغيل الخدمة من البداية...";
+    player.play().catch(() => {
+      resetListenState();
+      status.textContent = "تعذر تشغيل الصوت على هذا المتصفح.";
+    });
+  });
+  copyButton.addEventListener("click", async () => {
+    try {
+      await copyText(readableText());
+      copyButton.classList.add("is-copied");
+      status.textContent = "تم نسخ تفاصيل الخدمة.";
+      showCopyToast("تم النسخ");
+      window.setTimeout(() => copyButton.classList.remove("is-copied"), 1800);
+    } catch {
+      status.textContent = "تعذر النسخ على هذا المتصفح.";
+    }
+  });
+}
+
+async function copyText(text) {
+  if (navigator.clipboard?.writeText) {
+    try {
+      await navigator.clipboard.writeText(text);
+      return;
+    } catch {
+      // Fall through to the older browser copy path.
+    }
+  }
+  const textArea = document.createElement("textarea");
+  textArea.value = text;
+  textArea.setAttribute("readonly", "");
+  textArea.style.position = "fixed";
+  textArea.style.opacity = "0";
+  document.body.append(textArea);
+  textArea.select();
+  document.execCommand("copy");
+  textArea.remove();
 }
 
 function openWorkspace() {
   workspace.hidden = false;
   document.body.classList.add("modal-open");
+  resetWorkspaceScroll();
+  workspace.classList.remove("workspace-enter");
+  void workspace.offsetWidth;
+  workspace.classList.add("workspace-enter");
+  if (!workspaceHistoryOpen) {
+    history.pushState({ workspace: true }, "", "#workspace");
+    workspaceHistoryOpen = true;
+  }
 }
 
-function closeWorkspace() {
+function resetWorkspaceScroll() {
+  const panel = workspace.querySelector(".workspace-panel");
+  workspaceContent.scrollTop = 0;
+  if (panel) panel.scrollTop = 0;
+  requestAnimationFrame(() => {
+    workspaceContent.scrollTop = 0;
+    if (panel) panel.scrollTop = 0;
+  });
+}
+
+function closeWorkspace(options = {}) {
   workspace.hidden = true;
-  document.body.classList.remove("modal-open");
+  updateBodyLock();
   clearTimeout(locationTimer);
+  workspaceHistoryOpen = false;
+  if (!options.skipHistory && location.hash === "#workspace") {
+    history.back();
+  }
+}
+
+function updateBodyLock() {
+  const locked = !workspace.hidden || !albumModal.hidden || !assistantModal.hidden;
+  document.body.classList.toggle("modal-open", locked);
 }
 
 function showLocationToast() {
@@ -618,24 +858,214 @@ function showLocationToast() {
   }, 4200);
 }
 
-function openAlbum(index) {
-  activePhoto = index;
-  updateAlbumImage();
-  albumModal.hidden = false;
-  document.body.classList.add("modal-open");
+function showCopyToast(message) {
+  const toast = document.createElement("div");
+  toast.className = "copy-toast";
+  toast.textContent = message;
+  document.body.append(toast);
+  window.setTimeout(() => toast.classList.add("show"), 10);
+  window.setTimeout(() => toast.remove(), 2200);
 }
 
-function closeAlbum() {
+function openAlbum(index) {
+  activePhoto = index;
+  resetAlbumZoom();
+  updateAlbumImage();
+  albumModal.hidden = false;
+  assistantFloat.classList.add("is-hidden-for-album");
+  document.body.classList.add("modal-open");
+  if (!albumHistoryOpen) {
+    history.pushState({ album: true }, "", "#album");
+    albumHistoryOpen = true;
+  }
+}
+
+function closeAlbum(options = {}) {
   albumModal.hidden = true;
-  document.body.classList.remove("modal-open");
+  assistantFloat.classList.remove("is-hidden-for-album");
+  updateBodyLock();
+  albumHistoryOpen = false;
+  resetAlbumZoom();
+  if (!options.skipHistory && location.hash === "#album") {
+    history.back();
+  }
 }
 
 function movePhoto(direction) {
   activePhoto = (activePhoto + direction + platformData.galleryItems.length) % platformData.galleryItems.length;
+  resetAlbumZoom();
   updateAlbumImage();
 }
 
 function updateAlbumImage() {
-  albumImage.src = platformData.galleryItems[activePhoto].image;
-  albumImage.alt = platformData.galleryItems[activePhoto].title;
+  const item = platformData.galleryItems[activePhoto];
+  const previousItem = platformData.galleryItems[(activePhoto - 1 + platformData.galleryItems.length) % platformData.galleryItems.length];
+  const nextItem = platformData.galleryItems[(activePhoto + 1) % platformData.galleryItems.length];
+  albumImage.onerror = () => {
+    albumImage.onerror = null;
+    albumImage.src = item.fallback || item.image;
+  };
+  albumImage.src = item.image;
+  albumImage.alt = item.title;
+  albumImage.dataset.prev = previousItem.fallback || previousItem.image;
+  albumImage.dataset.next = nextItem.fallback || nextItem.image;
+  albumImage.parentElement?.style.setProperty("--album-next", `url("${nextItem.fallback || nextItem.image}")`);
+  albumImage.classList.remove("is-changing");
+  void albumImage.offsetWidth;
+  albumImage.classList.add("is-changing");
+  applyAlbumTransform();
+}
+
+function resetAlbumZoom() {
+  albumScale = 1;
+  albumOffsetX = 0;
+  albumOffsetY = 0;
+  applyAlbumTransform();
+}
+
+function applyAlbumTransform() {
+  albumImage.style.transform = `translate(${albumOffsetX}px, ${albumOffsetY}px) scale(${albumScale})`;
+  albumImage.classList.toggle("is-zoomed", albumScale > 1);
+}
+
+function initAlbumGestures() {
+  const albumStage = document.querySelector("#albumStage");
+  if (!albumStage) return;
+
+  albumStage.addEventListener("dblclick", () => {
+    albumScale = albumScale > 1 ? 1 : 2;
+    if (albumScale === 1) {
+      albumOffsetX = 0;
+      albumOffsetY = 0;
+    }
+    applyAlbumTransform();
+  });
+
+  albumStage.addEventListener("pointerdown", (event) => {
+    albumStage.setPointerCapture(event.pointerId);
+    albumDragStart = { x: event.clientX - albumOffsetX, y: event.clientY - albumOffsetY };
+  });
+
+  albumStage.addEventListener("pointermove", (event) => {
+    if (!albumDragStart || albumScale <= 1) return;
+    albumOffsetX = event.clientX - albumDragStart.x;
+    albumOffsetY = event.clientY - albumDragStart.y;
+    applyAlbumTransform();
+  });
+
+  ["pointerup", "pointercancel", "pointerleave"].forEach((eventName) => {
+    albumStage.addEventListener(eventName, () => {
+      albumDragStart = null;
+    });
+  });
+
+  albumStage.addEventListener("touchend", (event) => {
+    const now = Date.now();
+    if (now - albumLastTap < 280) {
+      event.preventDefault();
+      albumScale = albumScale > 1 ? 1 : 2;
+      if (albumScale === 1) {
+        albumOffsetX = 0;
+        albumOffsetY = 0;
+      }
+      applyAlbumTransform();
+    }
+    albumLastTap = now;
+  }, { passive: false });
+
+  albumStage.addEventListener("wheel", (event) => {
+    event.preventDefault();
+    albumScale = Math.min(3, Math.max(1, albumScale + (event.deltaY < 0 ? 0.18 : -0.18)));
+    if (albumScale === 1) {
+      albumOffsetX = 0;
+      albumOffsetY = 0;
+    }
+    applyAlbumTransform();
+  }, { passive: false });
+}
+
+function initCongratulations() {
+  const card = document.querySelector('[data-news-category="congratulations"]');
+  if (!card) return;
+  let celebrationTimer;
+  const celebrate = () => {
+    card.classList.remove("celebrate-now");
+    void card.offsetWidth;
+    card.classList.add("celebrate-now");
+    clearTimeout(celebrationTimer);
+    celebrationTimer = window.setTimeout(celebrate, 5000);
+  };
+  const observer = new IntersectionObserver((entries) => {
+    const visible = entries.some((entry) => entry.isIntersecting);
+    clearTimeout(celebrationTimer);
+    if (visible) celebrate();
+    else card.classList.remove("celebrate-now");
+  }, { threshold: 0.55 });
+  observer.observe(card);
+}
+
+function initScrollReveal() {
+  const items = document.querySelectorAll(".section, .unit-card, .news-card, .gallery-card, .footer-signature");
+  if (!("IntersectionObserver" in window)) {
+    items.forEach((item) => item.classList.add("is-visible"));
+    return;
+  }
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach((entry) => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add("is-visible");
+      }
+    });
+  }, { threshold: 0.12 });
+  items.forEach((item) => {
+    item.classList.add("reveal-item");
+    observer.observe(item);
+  });
+}
+
+function initAssistantFloat() {
+  if (!assistantSection || !("IntersectionObserver" in window)) return;
+  const observer = new IntersectionObserver((entries) => {
+    const visible = entries.some((entry) => entry.isIntersecting);
+    assistantFloat.classList.toggle("is-docked-to-page", visible);
+    if (visible) hideAssistantHint();
+  }, { threshold: 0.18, rootMargin: "-8% 0px -8% 0px" });
+  observer.observe(assistantSection);
+}
+
+function startAssistantHintLoop() {
+  const show = () => {
+    if (assistantModal.hidden && albumModal.hidden && !assistantFloat.classList.contains("is-docked-to-page")) {
+      assistantHint.hidden = false;
+      assistantHint.classList.remove("show");
+      void assistantHint.offsetWidth;
+      assistantHint.classList.add("show");
+      assistantHintTimer = window.setTimeout(hideAssistantHint, 3600);
+    }
+  };
+  assistantHintCycle = window.setInterval(show, 9000);
+  window.setTimeout(show, 5200);
+}
+
+function hideAssistantHint() {
+  clearTimeout(assistantHintTimer);
+  assistantHint.classList.remove("show");
+  window.setTimeout(() => {
+    if (!assistantHint.classList.contains("show")) assistantHint.hidden = true;
+  }, 360);
+}
+
+function openAssistant() {
+  hideAssistantHint();
+  assistantModal.hidden = false;
+  assistantOpen.setAttribute("aria-expanded", "true");
+  document.body.classList.add("modal-open");
+  const frame = assistantModal.querySelector(".assistant-frame");
+  if (!frame.getAttribute("src")) frame.setAttribute("src", frame.dataset.src);
+}
+
+function closeAssistant() {
+  assistantModal.hidden = true;
+  assistantOpen.setAttribute("aria-expanded", "false");
+  updateBodyLock();
 }
