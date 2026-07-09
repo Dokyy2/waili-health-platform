@@ -126,13 +126,13 @@
         <section class="section family-section" id="gallery">
           <div class="family-card">
             <div class="family-art" aria-hidden="true">
-              <span>♡</span>
+              <span class="family-heart-text">لمة العيلة</span>
             </div>
             <div class="family-copy">
               <p class="eyebrow">لمة العيلة</p>
               <h2>حكايات بدأت بنبضة</h2>
               <p>مساحة ألبومات عصرية لصور الفعاليات والتكريمات والذكريات. الصور هنا تتحرك بهدوء، ومع كل ضغطة تفتح تجربة مشاهدة أنيقة.</p>
-              <button class="primary-button" type="button" id="openAlbum">افتحي ألبوم الذكريات</button>
+              <button class="primary-button" type="button" id="openAlbum">افتح ألبوم الذكريات</button>
             </div>
           </div>
           <div class="album-strip" id="galleryGrid" aria-label="ألبوم صور لمة العيلة"></div>
@@ -143,15 +143,18 @@
             <div>
               <p class="eyebrow">المساعد الذكي</p>
               <h2>اسأل عن الخدمة المناسبة</h2>
-              <p>تم وضع المساعد داخل إطار المنصة، ويمكن استخدامه من نفس الصفحة مع الحفاظ على شكل المنصة وتجربة الموبايل.</p>
+              <p>المساعد الذكي موجود داخل الصفحة، ومعاه الأيقونة العائمة للوصول السريع من أي مكان.</p>
             </div>
-            <iframe class="assistant-frame" title="المساعد الذكي للخدمات الصحية" src="https://dokyy2.github.io/smart-assistant/" loading="lazy"></iframe>
+            <iframe class="assistant-page-frame" title="المساعد الذكي للخدمات الصحية" src="https://dokyy2.github.io/smart-assistant/" loading="lazy"></iframe>
           </div>
         </section>
+
       </main>
 
       <footer class="footer-signature">
-        <p>حقوق الملكية لمنطقة الوايلي الطبية - <span>Disgin : Eng Bassem Ashraf</span></p>
+        <p class="rights-line">حقوق الملكية الفكرية لمنطقة الوايلي الطبية</p>
+        <p class="review-line">تمت المراجعه د / رشا أحمد عبدالستار - مدير الوقائى بالمنطقه</p>
+        <p class="design-line">Disgin : Eng Bassem Ashraf</p>
       </footer>
     </div>
 
@@ -168,8 +171,28 @@
       <section class="album-viewer" role="dialog" aria-modal="true" aria-label="عارض صور لمة العيلة">
         <button class="close-button" type="button" data-close-album aria-label="إغلاق">×</button>
         <button class="album-arrow next" type="button" id="nextPhoto" aria-label="الصورة التالية">›</button>
-        <img id="albumImage" src="assets/images/platform-banner.png" alt="صورة من ألبوم لمة العيلة">
+        <div class="album-stage" id="albumStage">
+          <img id="albumImage" src="assets/images/platform-banner.png" alt="صورة من ألبوم لمة العيلة">
+        </div>
         <button class="album-arrow prev" type="button" id="prevPhoto" aria-label="الصورة السابقة">‹</button>
+      </section>
+    </div>
+
+    <div class="assistant-float" id="assistantFloat">
+      <p class="assistant-hint" id="assistantHint" role="status" hidden>اسألني</p>
+      <button class="assistant-orb" id="assistantOpen" type="button" aria-label="فتح المساعد الذكي" aria-expanded="false">
+        <img src="assets/images/assistant-logo.png" alt="">
+      </button>
+    </div>
+
+    <div class="assistant-modal" id="assistantModal" hidden>
+      <div class="workspace-backdrop" data-close-assistant></div>
+      <section class="assistant-dialog" role="dialog" aria-modal="true" aria-label="المساعد الذكي للخدمات الصحية">
+        <div class="assistant-dialog-head">
+          <strong>المساعد الذكي</strong>
+          <button class="close-button" type="button" data-close-assistant aria-label="إغلاق">×</button>
+        </div>
+        <iframe class="assistant-frame" title="المساعد الذكي للخدمات الصحية" data-src="https://dokyy2.github.io/smart-assistant/" loading="lazy"></iframe>
       </section>
     </div>
 
