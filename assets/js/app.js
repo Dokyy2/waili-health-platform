@@ -360,6 +360,8 @@ let albumOffsetX = 0;
 let albumOffsetY = 0;
 let albumDragStart = null;
 let albumLastTap = 0;
+let albumPinchStart = null;
+const albumPointers = new Map();
 let workspaceHistoryOpen = false;
 let albumHistoryOpen = false;
 
@@ -580,17 +582,12 @@ function voiceTools(serviceId) {
   const fileName = audioFiles[serviceId] || `${serviceId}.mp3`;
   const audioSrc = audioFiles[serviceId] ? `assets/audio/${audioFiles[serviceId]}` : "";
   return `
-      <button class="voice-action listen-action" type="button" data-listen-service data-audio-src="${audioSrc}" data-audio-name="${fileName}">
-        <span class="listen-symbol" aria-hidden="true">▶</span>
-        استمع للخدمة
+      <button class="voice-action listen-action" type="button" data-listen-service data-audio-src="${audioSrc}" data-audio-name="${fileName}" aria-label="استمع للخدمة">
+        <span class="listen-symbol" aria-hidden="true">🔊</span>
+        <span class="replay-chip" aria-hidden="true">↺</span>
       </button>
-      <button class="voice-action replay-action" type="button" data-replay-service data-audio-src="${audioSrc}" data-audio-name="${fileName}" aria-label="إعادة تشغيل الصوت">
-        <span aria-hidden="true">↺</span>
-        إعادة
-      </button>
-      <button class="voice-action copy-action" type="button" data-copy-service>
-        <span aria-hidden="true">✓</span>
-        نسخ التفاصيل
+      <button class="voice-action copy-action" type="button" data-copy-service aria-label="نسخ التفاصيل">
+        <span class="copy-symbol" aria-hidden="true">⧉</span>
       </button>
   `;
 }
@@ -653,7 +650,9 @@ function openHospitals() {
         `).join("")}
       </div>
       <div class="sheet-actions">
-        <button class="ghost-button" type="button" data-back>رجوع لخدمات الجهة</button>
+        <button class="ghost-button back-action" type="button" data-back aria-label="رجوع لخدمات الجهة">
+          <span aria-hidden="true">↩</span>
+        </button>
       </div>
     </article>
   `;
@@ -700,10 +699,12 @@ function serviceActions(service, serviceId = "") {
   return `
     <div class="sheet-actions ${serviceId ? "voice-tools" : ""}">
       ${serviceId ? voiceTools(serviceId) : ""}
-      <a class="primary-button" href="${service.pdf || "#"}" ${!service.pdf || service.pdf === "#" ? "aria-disabled='true'" : "target='_blank' rel='noopener'"}>
-        فتح الملف الرسمي PDF
+      <a class="primary-button" aria-label="عرض ملف PDF" href="${service.pdf || "#"}" ${!service.pdf || service.pdf === "#" ? "aria-disabled='true'" : "target='_blank' rel='noopener'"}>
+        <span aria-hidden="true">PDF</span>
       </a>
-      <button class="ghost-button" type="button" data-back>رجوع لخدمات الجهة</button>
+      <button class="ghost-button back-action" type="button" data-back aria-label="رجوع لخدمات الجهة">
+        <span aria-hidden="true">↩</span>
+      </button>
       ${serviceId ? `<p class="voice-status" aria-live="polite"></p>` : ""}
     </div>
   `;
@@ -716,7 +717,6 @@ function bindBackButton() {
 
 function bindVoiceTools() {
   const listenButton = workspaceContent.querySelector("[data-listen-service]");
-  const replayButton = workspaceContent.querySelector("[data-replay-service]");
   const copyButton = workspaceContent.querySelector("[data-copy-service]");
   const status = workspaceContent.querySelector(".voice-status");
   if (!listenButton || !copyButton || !status) return;
@@ -727,7 +727,7 @@ function bindVoiceTools() {
     .trim();
   const resetListenState = () => {
     listenButton.classList.remove("is-speaking");
-    if (listenSymbol) listenSymbol.textContent = "▶";
+    if (listenSymbol) listenSymbol.textContent = "🔊";
   };
   const ensureAudio = (button = listenButton) => {
     const audioSrc = button.dataset.audioSrc;
@@ -749,9 +749,21 @@ function bindVoiceTools() {
     }
     return audioPlayer;
   };
-  listenButton.addEventListener("click", () => {
+  listenButton.addEventListener("click", (event) => {
     const player = ensureAudio();
     if (!player) return;
+    if (event.target.closest(".replay-chip")) {
+      player.pause();
+      player.currentTime = 0;
+      listenButton.classList.add("is-speaking");
+      if (listenSymbol) listenSymbol.textContent = "■";
+      status.textContent = "إعادة تشغيل الخدمة من البداية...";
+      player.play().catch(() => {
+        resetListenState();
+        status.textContent = "تعذر تشغيل الصوت على هذا المتصفح.";
+      });
+      return;
+    }
     if (!player.paused) {
       player.pause();
       resetListenState();
@@ -766,26 +778,18 @@ function bindVoiceTools() {
       status.textContent = "تعذر تشغيل الصوت على هذا المتصفح.";
     });
   });
-  replayButton?.addEventListener("click", () => {
-    const player = ensureAudio(replayButton);
-    if (!player) return;
-    player.pause();
-    player.currentTime = 0;
-    listenButton.classList.add("is-speaking");
-    if (listenSymbol) listenSymbol.textContent = "■";
-    status.textContent = "إعادة تشغيل الخدمة من البداية...";
-    player.play().catch(() => {
-      resetListenState();
-      status.textContent = "تعذر تشغيل الصوت على هذا المتصفح.";
-    });
-  });
   copyButton.addEventListener("click", async () => {
     try {
       await copyText(readableText());
       copyButton.classList.add("is-copied");
+      const copySymbol = copyButton.querySelector(".copy-symbol");
+      if (copySymbol) copySymbol.textContent = "✓";
       status.textContent = "تم نسخ تفاصيل الخدمة.";
       showCopyToast("تم النسخ");
-      window.setTimeout(() => copyButton.classList.remove("is-copied"), 1800);
+      window.setTimeout(() => {
+        copyButton.classList.remove("is-copied");
+        if (copySymbol) copySymbol.textContent = "⧉";
+      }, 1800);
     } catch {
       status.textContent = "تعذر النسخ على هذا المتصفح.";
     }
@@ -920,33 +924,80 @@ function resetAlbumZoom() {
   albumScale = 1;
   albumOffsetX = 0;
   albumOffsetY = 0;
+  albumDragStart = null;
+  albumPinchStart = null;
+  albumPointers.clear();
   applyAlbumTransform();
 }
 
 function applyAlbumTransform() {
+  if (albumScale <= 1) {
+    albumOffsetX = 0;
+    albumOffsetY = 0;
+  } else {
+    const maxOffset = 420 * albumScale;
+    albumOffsetX = Math.max(-maxOffset, Math.min(maxOffset, albumOffsetX));
+    albumOffsetY = Math.max(-maxOffset, Math.min(maxOffset, albumOffsetY));
+  }
   albumImage.style.transform = `translate(${albumOffsetX}px, ${albumOffsetY}px) scale(${albumScale})`;
   albumImage.classList.toggle("is-zoomed", albumScale > 1);
+}
+
+function setAlbumScale(nextScale, origin) {
+  const oldScale = albumScale;
+  albumScale = Math.min(4, Math.max(1, nextScale));
+  if (origin && oldScale !== albumScale && albumScale > 1) {
+    albumOffsetX += (origin.x - window.innerWidth / 2) * (albumScale - oldScale) * 0.08;
+    albumOffsetY += (origin.y - window.innerHeight / 2) * (albumScale - oldScale) * 0.08;
+  }
+  applyAlbumTransform();
+}
+
+function pointerDistance(points) {
+  const [a, b] = points;
+  return Math.hypot(a.x - b.x, a.y - b.y);
+}
+
+function pointerCenter(points) {
+  const [a, b] = points;
+  return { x: (a.x + b.x) / 2, y: (a.y + b.y) / 2 };
 }
 
 function initAlbumGestures() {
   const albumStage = document.querySelector("#albumStage");
   if (!albumStage) return;
 
-  albumStage.addEventListener("dblclick", () => {
-    albumScale = albumScale > 1 ? 1 : 2;
-    if (albumScale === 1) {
-      albumOffsetX = 0;
-      albumOffsetY = 0;
-    }
-    applyAlbumTransform();
+  albumStage.addEventListener("dblclick", (event) => {
+    setAlbumScale(albumScale > 1 ? 1 : 2.35, { x: event.clientX, y: event.clientY });
   });
 
   albumStage.addEventListener("pointerdown", (event) => {
+    albumPointers.set(event.pointerId, { x: event.clientX, y: event.clientY });
     albumStage.setPointerCapture(event.pointerId);
+    if (albumPointers.size === 2) {
+      const points = [...albumPointers.values()];
+      albumPinchStart = { distance: pointerDistance(points), scale: albumScale, center: pointerCenter(points) };
+      albumDragStart = null;
+      return;
+    }
     albumDragStart = { x: event.clientX - albumOffsetX, y: event.clientY - albumOffsetY };
   });
 
   albumStage.addEventListener("pointermove", (event) => {
+    if (albumPointers.has(event.pointerId)) {
+      albumPointers.set(event.pointerId, { x: event.clientX, y: event.clientY });
+    }
+    if (albumPointers.size === 2 && albumPinchStart) {
+      event.preventDefault();
+      const points = [...albumPointers.values()];
+      const nextDistance = pointerDistance(points);
+      const center = pointerCenter(points);
+      setAlbumScale(albumPinchStart.scale * (nextDistance / albumPinchStart.distance), center);
+      albumOffsetX += (center.x - albumPinchStart.center.x) * 0.12;
+      albumOffsetY += (center.y - albumPinchStart.center.y) * 0.12;
+      applyAlbumTransform();
+      return;
+    }
     if (!albumDragStart || albumScale <= 1) return;
     albumOffsetX = event.clientX - albumDragStart.x;
     albumOffsetY = event.clientY - albumDragStart.y;
@@ -954,7 +1005,9 @@ function initAlbumGestures() {
   });
 
   ["pointerup", "pointercancel", "pointerleave"].forEach((eventName) => {
-    albumStage.addEventListener(eventName, () => {
+    albumStage.addEventListener(eventName, (event) => {
+      albumPointers.delete(event.pointerId);
+      if (albumPointers.size < 2) albumPinchStart = null;
       albumDragStart = null;
     });
   });
@@ -963,24 +1016,15 @@ function initAlbumGestures() {
     const now = Date.now();
     if (now - albumLastTap < 280) {
       event.preventDefault();
-      albumScale = albumScale > 1 ? 1 : 2;
-      if (albumScale === 1) {
-        albumOffsetX = 0;
-        albumOffsetY = 0;
-      }
-      applyAlbumTransform();
+      const touch = event.changedTouches[0];
+      setAlbumScale(albumScale > 1 ? 1 : 2.35, touch ? { x: touch.clientX, y: touch.clientY } : undefined);
     }
     albumLastTap = now;
   }, { passive: false });
 
   albumStage.addEventListener("wheel", (event) => {
     event.preventDefault();
-    albumScale = Math.min(3, Math.max(1, albumScale + (event.deltaY < 0 ? 0.18 : -0.18)));
-    if (albumScale === 1) {
-      albumOffsetX = 0;
-      albumOffsetY = 0;
-    }
-    applyAlbumTransform();
+    setAlbumScale(albumScale + (event.deltaY < 0 ? 0.24 : -0.24), { x: event.clientX, y: event.clientY });
   }, { passive: false });
 }
 
