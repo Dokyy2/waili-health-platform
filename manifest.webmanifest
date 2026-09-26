@@ -1,0 +1,10 @@
+{
+  "name": "المنصة الرقمية للخدمات الصحية - منطقة الوايلي الطبية",
+  "short_name": "الوايلي الطبية",
+  "start_url": "./",
+  "display": "standalone",
+  "background_color": "#f4fbf9",
+  "theme_color": "#0f766e",
+  "dir": "rtl",
+  "lang": "ar"
+}
