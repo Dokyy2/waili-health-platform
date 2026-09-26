@@ -1433,10 +1433,22 @@ body.dark .care-card {
   animation: premiumRights 4.6s ease-in-out infinite;
 }
 
+.footer-signature .supervision-line {
+  color: transparent;
+  background: linear-gradient(100deg, #076b70, #3ca8a3, #c7f0e3, #0b7b78, #07555c);
+  background-size: 260% 100%;
+  background-clip: text;
+  -webkit-background-clip: text;
+  font-size: 1.03rem;
+  font-weight: 950;
+  text-shadow: 0 0 10px rgba(11, 123, 120, .16);
+  animation: supervisionShine 5.1s ease-in-out infinite;
+}
+
 .footer-signature .review-line {
   color: #596165;
-  font-size: 0.9rem;
-  font-weight: 850;
+  font-size: 1rem;
+  font-weight: 950;
 }
 
 .footer-signature .design-line {
@@ -1446,8 +1458,8 @@ body.dark .care-card {
   background-clip: text;
   -webkit-background-clip: text;
   animation: goldShine 3s ease-in-out infinite;
-  margin-top: 3px;
-  font-size: 0.92rem;
+  margin-top: 5px;
+  font-size: 0.82rem;
   font-weight: 950;
 }
 
@@ -1864,21 +1876,78 @@ body.dark .care-card {
 
 .footer-signature .review-line {
   color: transparent;
-  background: linear-gradient(100deg, #75818a, #e8eef1, #aeb9c0, #f7fafb, #7d8991);
-  background-size: 240% 100%;
+  background: linear-gradient(100deg, #9b1d52, #d64b83, #ffd1e3, #ba2f69, #842044);
+  background-size: 280% 100%;
   background-clip: text;
   -webkit-background-clip: text;
-  text-shadow: 0 0 10px rgba(198, 211, 218, .18);
-  animation: silverShine 5.8s ease-in-out infinite;
+  text-shadow: 0 0 12px rgba(186, 47, 105, .26);
+  font-size: .97rem;
+  font-weight: 950;
+  letter-spacing: .08px;
+  animation: reviewShine 4.8s ease-in-out infinite;
 }
 
-@keyframes silverShine {
-  0%,100% { background-position: 0% 50%; opacity: .78; }
-  50% { background-position: 100% 50%; opacity: 1; }
+@keyframes reviewShine {
+  0%,100% { background-position: 0% 50%; opacity: .9; filter: drop-shadow(0 0 1px rgba(186, 47, 105, .12)); }
+  50% { background-position: 100% 50%; opacity: 1; filter: drop-shadow(0 0 6px rgba(255, 209, 227, .55)); }
+}
+
+@keyframes supervisionShine {
+  0%,100% { background-position: 0% 50%; opacity: .9; }
+  50% { background-position: 100% 50%; opacity: 1; filter: drop-shadow(0 0 5px rgba(199, 240, 227, .5)); }
 }
 
 @media (max-width: 620px) {
   .album-viewer { width:100vw; max-height:100vh; padding:5px; border-radius:0; }
   .album-stage,.album-stage.is-portrait { height:calc(100vh - 60px); max-height:calc(100vh - 60px); }
   .album-stage.is-portrait img { max-width:calc(100% - 8px); }
+}
+
+/* Every service opens as a true full-screen page. This prevents the panel from
+   being positioned outside the visible area on narrow phones and embedded views. */
+.workspace {
+  z-index: 70;
+  display: grid;
+  place-items: stretch;
+  padding: 0;
+  overflow: hidden;
+}
+
+.workspace .workspace-panel {
+  width: 100vw;
+  min-width: 0;
+  height: 100vh;
+  height: 100dvh;
+  max-height: 100vh;
+  max-height: 100dvh;
+  margin: 0;
+  padding: 72px 14px 32px;
+  overflow-x: hidden;
+  overflow-y: auto;
+  border-radius: 0;
+  background: var(--bg);
+  overscroll-behavior: contain;
+}
+
+.workspace .workspace-panel > .close-button {
+  position: fixed;
+  top: max(14px, env(safe-area-inset-top));
+  right: 14px;
+  left: auto;
+  z-index: 8;
+  margin: 0;
+  background: var(--surface-strong);
+}
+
+.workspace.workspace-fullscreen .workspace-panel {
+  width: 100vw;
+  height: 100dvh;
+  max-height: 100dvh;
+  padding: 0 14px 32px;
+}
+
+.workspace.workspace-fullscreen .workspace-panel > .close-button {
+  top: max(76px, calc(env(safe-area-inset-top) + 62px));
+  right: 14px;
+  left: auto;
 }
