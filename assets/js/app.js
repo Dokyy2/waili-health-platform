@@ -4,7 +4,54 @@ const congratulationsUrl = "https://www.facebook.com/share/p/1Fk5bdv6X9/";
 
 const achievementsUrl = "https://www.facebook.com/share/v/18FU3okutN/";
 
-const officeBaseServices = ["birth", "death", "family-planning", "vaccination", "hospitals", "full-guide"];
+const officeBaseServices = ["birth", "death", "family-planning", "vaccination", "hospitals"];
+
+const officeServiceDocuments = {
+  demerdash: {
+    birth: "assets/docs/الدمرداش/الدمرداش - تسجيل المواليد.pdf",
+    death: "assets/docs/الدمرداش/الدمرداش - تسجيل الوفيات.pdf",
+    "family-planning": "assets/docs/الدمرداش/الدمرداش - تنظيم الاسرة.pdf",
+    vaccination: "assets/docs/الدمرداش/الدمرداش - جدول التطعيمات.pdf",
+    hospitals: "assets/docs/الدمرداش/الدمرداش - المستشفيات التابعة.pdf"
+  },
+  zaher: {
+    birth: "assets/docs/الظاهر/الظاهر - تسجيل المواليد.pdf",
+    death: "assets/docs/الظاهر/الظاهر - تسجيل الوفيات.pdf",
+    "family-planning": "assets/docs/الظاهر/الظاهر - تنظيم الأسرة.pdf",
+    vaccination: "assets/docs/الظاهر/الظاهر - جدول التطعيمات.pdf",
+    hospitals: "assets/docs/الظاهر/الظاهر - المستشفيات التابعة.pdf"
+  },
+  abbassia: {
+    birth: "assets/docs/العباسيه/العباسية - تسجيل المواليد.pdf",
+    death: "assets/docs/العباسيه/العباسية - تسجيل الوفيات.pdf",
+    "family-planning": "assets/docs/العباسيه/العباسية - تنظيم الأسرة.pdf",
+    vaccination: "assets/docs/العباسيه/العباسية - جدول التطعيمات.pdf",
+    hospitals: "assets/docs/العباسيه/العباسية - المستشفيات التابعة.pdf",
+    immunization: "assets/docs/العباسيه/العباسية - خدمات التحصييين.pdf",
+    "vaccine-prices": "assets/docs/العباسيه/العباسية - قائمة مكاتب التطعيم الدولية والحجاج والمعتمرين بالمحافظات.pdf",
+    "covid-recovery": "assets/docs/العباسيه/العباسية - رسالة إلى كل متعافٍ من فيروس سى.pdf",
+    "hepatitis-b-mothers": "assets/docs/العباسيه/العباسية - مصل فيروس الالتهاب الكبدي بى لأمهات حاملة للفيروس.pdf"
+  }
+};
+
+const unitMaps = {
+  demerdash: {
+    embedUrl: "https://www.google.com/maps/d/u/0/embed?mid=1i7VOFwUx3dgmkOQ8Qjlee9YT6VXV6bM&ehbc=2E312F",
+    directionsUrl: "https://www.google.com/maps/d/u/0/viewer?mid=1i7VOFwUx3dgmkOQ8Qjlee9YT6VXV6bM",
+    description: "خريطة نطاق مكتب صحة الدمرداش للحالات المنزلية."
+  },
+  "child-abbassia": createUnitMap("رعاية طفل العباسية", "١٠ شارع محمد رفعت، أمام قسم الوايلي، الوايلي، القاهرة"),
+  dermatology: createUnitMap("عيادة الجلدية بالعباسية", "فخري عبد النور، العباسية القبلية، الوايلي، القاهرة")
+};
+
+function createUnitMap(name, address) {
+  const query = `${name} ${address}`;
+  return {
+    embedUrl: `https://www.google.com/maps?q=${encodeURIComponent(query)}&output=embed`,
+    directionsUrl: `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(query)}`,
+    description: address
+  };
+}
 
 const vaccinationSchedule = [
   { age: "عند الولادة", label: "البداية الأولى", icon: "👶", accent: "birth", vaccines: [
@@ -205,14 +252,6 @@ const platformData = {
       description: "قائمة المستشفيات التابعة للمكتب المختار مع العناوين بشكل واضح وسهل القراءة.",
       kind: "hospitals"
     },
-    "full-guide": officialService({
-      title: "دليل الخدمات الكامل",
-      description: "مساحة جاهزة لملف الدليل الكامل لكل مكتب، ويمكن ربطها لاحقًا بملف Google Drive الرسمي.",
-      duration: "حسب نوع الخدمة",
-      requirements: ["اختيار المكتب المختص.", "فتح الخدمة المطلوبة.", "مراجعة المستندات والتعليمات قبل التوجه للمكتب."],
-      steps: ["تصفح الخدمات داخل المنصة.", "افتح صفحة الخدمة الرقمية.", "حمّل الملف الرسمي عند الحاجة."],
-      notes: ["سيتم ربط الملف الرسمي بعد اعتماد نسخة الدليل النهائية."]
-    }),
     immunization: officialService({
       title: "خدمات التحصين - الحج والعمرة",
       description: "مركز التحصين المعتمد بمنطقة الوايلي داخل مكتب صحة العباسية، ويقدم تحصينات المسافرين والمقيمين طبقًا لتعليمات وزارة الصحة.",
@@ -521,9 +560,23 @@ initAlbumGestures();
 initAssistantFloat();
 initDynamicHeadings();
 
-window.addEventListener("popstate", () => {
+window.addEventListener("popstate", (event) => {
   if (!albumModal.hidden) {
     closeAlbum({ skipHistory: true });
+    return;
+  }
+  const state = event.state;
+  if (state?.workspace) {
+    workspaceHistoryOpen = true;
+    activeUnitId = state.unitId || activeUnitId;
+    if (state.view === "service" && state.serviceId) {
+      openService(state.serviceId, { skipHistory: true });
+    } else if (state.view === "map" && activeUnitId) {
+      const unit = platformData.units.find((item) => item.id === activeUnitId);
+      if (unit) openUnitMap(unit, { skipHistory: true });
+    } else if (activeUnitId) {
+      openUnit(activeUnitId, { skipHistory: true });
+    }
     return;
   }
   if (!workspace.hidden) {
@@ -610,7 +663,7 @@ function renderGallery() {
   });
 }
 
-function openUnit(unitId) {
+function openUnit(unitId, options = {}) {
   const unit = platformData.units.find((item) => item.id === unitId);
   if (!unit) return;
   activeUnitId = unitId;
@@ -631,9 +684,9 @@ function openUnit(unitId) {
       ${services.map(({ id, service }) => serviceCard(id, service, unit.type)).join("")}
     </div>
   `;
-  openWorkspace();
+  openWorkspace({ skipHistory: options.skipHistory });
   resetWorkspaceScroll();
-  workspaceContent.querySelector("[data-location]").addEventListener("click", showLocationToast);
+  workspaceContent.querySelector("[data-location]").addEventListener("click", () => openUnitMap(unit));
   workspaceContent.querySelectorAll("[data-service]").forEach((button) => {
     button.addEventListener("click", () => openService(button.dataset.service));
   });
@@ -653,9 +706,13 @@ function serviceCard(id, service, unitType) {
   `;
 }
 
-function openService(serviceId) {
+function openService(serviceId, options = {}) {
   const service = platformData.services[serviceId];
   if (!service) return;
+  if (!options.skipHistory) {
+    history.pushState({ workspace: true, view: "service", unitId: activeUnitId, serviceId }, "", "#workspace");
+    workspaceHistoryOpen = true;
+  }
   if (serviceId === "vaccination" || service.interactiveGuide === "vaccines") return openVaccinationGuide();
   if (service.kind === "marriage-paused") return openMarriagePaused(service);
   if (service.kind === "dentistry") return openDentistry(service);
@@ -689,6 +746,33 @@ function openOfficial(service, serviceId) {
   resetWorkspaceScroll();
 }
 
+function openUnitMap(unit, options = {}) {
+  const map = unitMaps[unit.id] || createUnitMap(unit.title, unit.locationTitle);
+  if (!options.skipHistory) {
+    history.pushState({ workspace: true, view: "map", unitId: unit.id }, "", "#workspace");
+    workspaceHistoryOpen = true;
+  }
+  workspaceContent.innerHTML = `
+    <article class="service-sheet map-sheet">
+      <div class="sheet-header">
+        <p class="eyebrow">خريطة واتجاهات</p>
+        <h2 id="workspaceTitle">${unit.locationTitle}</h2>
+        <p>${map.description}</p>
+      </div>
+      <div class="unit-map-wrap">
+        <iframe class="unit-map-frame" title="${unit.locationTitle}" src="${map.embedUrl}" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+      </div>
+      <div class="sheet-actions map-actions">
+        <a class="primary-button location-directions" href="${map.directionsUrl}" target="_blank" rel="noopener"><span aria-hidden="true">⌖</span> فتح الاتجاهات</a>
+        <button class="ghost-button back-action" type="button" data-back aria-label="رجوع لخدمات الجهة"><span aria-hidden="true">↩</span> رجوع</button>
+      </div>
+    </article>
+  `;
+  openWorkspace({ skipHistory: options.skipHistory });
+  bindBackButton();
+  resetWorkspaceScroll();
+}
+
 function openMarriagePaused(service) {
   workspaceContent.innerHTML = `
     <article class="service-sheet marriage-paused-sheet">
@@ -701,7 +785,7 @@ function openMarriagePaused(service) {
         <strong>تعرّف على أماكن فحص المقبلين على الزواج</strong>
         <small>افتح الدليل الرسمي للمكاتب المتاحة</small>
       </a>
-      <a class="marriage-pdf-link" href="${service.pdf}" target="_blank" rel="noopener">عرض متطلبات الفحص والدليل التفصيلي PDF</a>
+      <a class="marriage-pdf-link" href="${service.pdf}" target="_blank" rel="noopener">عرض متطلبات الفحص والدليل التفصيلي</a>
       <button class="ghost-button back-action marriage-back" type="button" data-back aria-label="رجوع لخدمات الجهة"><span aria-hidden="true">↩</span> رجوع لخدمات رعاية الطفل</button>
     </article>`;
   bindBackButton();
@@ -735,10 +819,7 @@ function openVaccinationGuide() {
   workspace.classList.add("workspace-fullscreen");
   workspaceContent.innerHTML = `
     <article class="service-sheet vaccine-guide">
-      <div class="full-screen-topbar">
-        <button class="ghost-button back-action" type="button" data-back aria-label="رجوع لخدمات الجهة"><span aria-hidden="true">↩</span> رجوع</button>
-        <span>التطعيمات</span>
-      </div>
+      <div class="full-screen-topbar"><span>التطعيمات</span></div>
       <header class="vaccine-guide-hero">
         <p class="eyebrow">دليل الأسرة الصحي</p>
         <h2 id="workspaceTitle">تطعيمات طفلك خطوة بخطوة</h2>
@@ -756,9 +837,13 @@ function openVaccinationGuide() {
       <section class="vaccine-details" id="vaccineDetails" aria-live="polite">
         <p>ابدأ باختيار عمر الطفل من الكروت بالأعلى.</p>
       </section>
+      <div class="sheet-actions guide-actions">
+        ${officeDocumentAction("vaccination")}
+        <button class="ghost-button back-action" type="button" data-back aria-label="رجوع لخدمات الجهة"><span aria-hidden="true">↩</span> رجوع لخدمات الجهة</button>
+      </div>
     </article>`;
   openWorkspace({ fullScreen: true });
-  workspaceContent.querySelector("[data-back]").addEventListener("click", () => openUnit(activeUnitId));
+  bindBackButton();
   workspaceContent.querySelectorAll("[data-vaccine-age]").forEach((button) => button.addEventListener("click", () => showVaccineDetails(Number(button.dataset.vaccineAge))));
   resetWorkspaceScroll();
 }
@@ -781,7 +866,7 @@ function openDentistry(service) {
   workspace.classList.add("workspace-fullscreen");
   workspaceContent.innerHTML = `
     <article class="service-sheet dentistry-sheet">
-      <div class="full-screen-topbar"><button class="ghost-button back-action" type="button" data-back aria-label="رجوع لخدمات الجهة"><span aria-hidden="true">↩</span> رجوع</button><span>طب الأسنان</span></div>
+      <div class="full-screen-topbar"><span>طب الأسنان</span></div>
       <header class="dentistry-hero">
         <p class="eyebrow">رعاية طفل العباسية</p>
         <h2 id="workspaceTitle">طب الأسنان — الخدمات والأسعار</h2>
@@ -797,10 +882,15 @@ function openDentistry(service) {
         ${dentalPriceGroups.map((group, index) => `<button type="button" class="dental-group-card" data-dental-group="${index}"><span>${group.icon}</span><strong>${group.title}</strong><small>${group.items.length} خدمات وأسعار</small><b>‹</b></button>`).join("")}
       </div>
       <section id="dentalResults" class="dental-results" aria-live="polite"><p>اختر تخصصًا لعرض الكشوفات والخدمات المتاحة.</p></section>
-      <section class="source-documents"><strong>نسخ القائمة المرفقة</strong><a href="assets/docs/dental-prices-page-1.png" target="_blank" rel="noopener">الصفحة الأولى ↗</a><a href="assets/docs/dental-prices-page-2.png" target="_blank" rel="noopener">الصفحة الثانية ↗</a></section>
+      <section class="source-documents official-source-documents">
+        <span class="source-documents-seal" aria-hidden="true">⚖</span>
+        <div><p class="eyebrow">مرجع الأسعار الحكومي</p><strong>نسخ القائمة الرسمية المرفقة بالقرار الوزاري</strong><small>الأسعار المعتمدة ظاهرة في النسخ الأصلية التالية</small></div>
+        <div class="source-document-links"><a href="assets/docs/dental-prices-page-1.png" target="_blank" rel="noopener">الصفحة الأولى ↗</a><a href="assets/docs/dental-prices-page-2.png" target="_blank" rel="noopener">الصفحة الثانية ↗</a></div>
+      </section>
+      <div class="sheet-actions guide-actions"><button class="ghost-button back-action" type="button" data-back aria-label="رجوع لخدمات الجهة"><span aria-hidden="true">↩</span> رجوع لخدمات الجهة</button></div>
     </article>`;
   openWorkspace({ fullScreen: true });
-  workspaceContent.querySelector("[data-back]").addEventListener("click", () => openUnit(activeUnitId));
+  bindBackButton();
   workspaceContent.querySelectorAll("[data-dental-group]").forEach((button) => button.addEventListener("click", () => showDentalGroup(Number(button.dataset.dentalGroup))));
   resetWorkspaceScroll();
 }
@@ -886,19 +976,20 @@ function openHospitals() {
             <div>
               <h3>${name}</h3>
               <p>${address}</p>
+              <a class="hospital-location" href="${mapSearchHref(name, address)}" target="_blank" rel="noopener"><span aria-hidden="true">⌖</span> فتح الموقع</a>
             </div>
           </section>
         `).join("")}
       </div>
-      <div class="sheet-actions">
-        <button class="ghost-button back-action" type="button" data-back aria-label="رجوع لخدمات الجهة">
-          <span aria-hidden="true">↩</span>
-        </button>
-      </div>
+      ${serviceActions({ pdf: officeDocumentFor("hospitals") })}
     </article>
   `;
   bindBackButton();
   resetWorkspaceScroll();
+}
+
+function mapSearchHref(name, address) {
+  return `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(`${name} ${address}`)}`;
 }
 
 function openPrices(service, serviceId) {
@@ -937,10 +1028,11 @@ function infoBlock(title, items, listType) {
 }
 
 function serviceActions(service, serviceId = "") {
+  const documentUrl = officeDocumentFor(serviceId) || service.pdf;
   return `
     <div class="sheet-actions ${serviceId ? "voice-tools" : ""}">
       ${serviceId ? voiceTools(serviceId) : ""}
-      ${service.pdf && service.pdf !== "#" ? `<a class="primary-button pdf-action" aria-label="فتح الدليل التفصيلي PDF" href="${service.pdf}" target="_blank" rel="noopener"><span aria-hidden="true">PDF</span><span>فتح الدليل</span></a>` : ""}
+      ${documentUrl && documentUrl !== "#" ? `<a class="primary-button pdf-action" aria-label="فتح الدليل التفصيلي" href="${documentUrl}" target="_blank" rel="noopener">فتح الدليل</a>` : ""}
       <button class="ghost-button back-action" type="button" data-back aria-label="رجوع لخدمات الجهة">
         <span aria-hidden="true">↩</span>
       </button>
@@ -949,8 +1041,23 @@ function serviceActions(service, serviceId = "") {
   `;
 }
 
+function officeDocumentFor(serviceId) {
+  return officeServiceDocuments[activeUnitId]?.[serviceId] || "";
+}
+
+function officeDocumentAction(serviceId) {
+  const documentUrl = officeDocumentFor(serviceId);
+  return documentUrl ? `<a class="primary-button pdf-action" aria-label="فتح الدليل التفصيلي" href="${documentUrl}" target="_blank" rel="noopener">فتح الدليل</a>` : "";
+}
+
 function bindBackButton() {
-  workspaceContent.querySelector("[data-back]").addEventListener("click", () => openUnit(activeUnitId));
+  workspaceContent.querySelector("[data-back]").addEventListener("click", () => {
+    if (history.state?.workspace && ["service", "map"].includes(history.state.view)) {
+      history.back();
+      return;
+    }
+    openUnit(activeUnitId);
+  });
   bindVoiceTools();
 }
 
@@ -960,7 +1067,7 @@ function bindVoiceTools() {
   const status = workspaceContent.querySelector(".voice-status");
   if (!listenButton || !copyButton || !status) return;
   const readableText = () => workspaceContent.querySelector(".service-sheet").innerText
-    .replace(/استمع للخدمة|إعادة|نسخ التفاصيل|فتح الملف الرسمي PDF|رجوع لخدمات الجهة/g, "")
+    .replace(/استمع للخدمة|إعادة|نسخ التفاصيل|فتح الدليل|رجوع لخدمات الجهة/g, "")
     .trim();
   listenButton.addEventListener("click", (event) => {
     const audioSrc = listenButton.dataset.audioSrc;
@@ -1079,8 +1186,8 @@ function openWorkspace(options = {}) {
   workspace.classList.remove("workspace-enter");
   void workspace.offsetWidth;
   workspace.classList.add("workspace-enter");
-  if (!workspaceHistoryOpen) {
-    history.pushState({ workspace: true }, "", "#workspace");
+  if (!workspaceHistoryOpen && !options.skipHistory) {
+    history.pushState({ workspace: true, view: "unit", unitId: activeUnitId }, "", "#workspace");
     workspaceHistoryOpen = true;
   }
 }
@@ -1101,8 +1208,8 @@ function closeWorkspace(options = {}) {
   updateBodyLock();
   clearTimeout(locationTimer);
   workspaceHistoryOpen = false;
-  if (!options.skipHistory && location.hash === "#workspace") {
-    history.back();
+  if (!options.skipHistory && history.state?.workspace) {
+    history.go(history.state.view === "unit" ? -1 : -2);
   }
 }
 

@@ -14,7 +14,7 @@
   --shadow: 0 18px 48px rgba(19, 61, 68, 0.14);
   --radius: 8px;
   --radius-lg: 22px;
-  --container: min(1120px, calc(100vw - 28px));
+  --container: min(1120px, calc(100% - 28px));
   font-family: "Cairo", "Tajawal", "Segoe UI Variable", "Segoe UI", Tahoma, Arial, sans-serif;
 }
 
@@ -39,11 +39,18 @@ body.dark {
 
 html {
   scroll-behavior: smooth;
+  width: 100%;
+  max-width: 100%;
+  overflow-x: hidden;
 }
 
 body {
   margin: 0;
+  width: 100%;
+  max-width: 100%;
   min-height: 100vh;
+  overflow-x: hidden;
+  touch-action: pan-y;
   background:
     linear-gradient(180deg, rgba(234, 247, 255, 0.72), rgba(243, 251, 251, 0.94) 34%, var(--bg)),
     var(--bg);
@@ -62,6 +69,11 @@ a {
 
 button {
   color: inherit;
+}
+
+img,
+iframe {
+  max-width: 100%;
 }
 
 a {
@@ -128,15 +140,18 @@ a {
 .topbar,
 .hero-content,
 .section,
+.footer-divider,
 .footer-signature {
   width: var(--container);
   margin-inline: auto;
 }
 
 .topbar {
-  position: sticky;
-  top: 10px;
-  z-index: 15;
+  position: fixed;
+  top: max(10px, env(safe-area-inset-top));
+  left: 50%;
+  z-index: 30;
+  transform: translateX(-50%);
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -401,7 +416,7 @@ body.dark .care-card {
 .updates-section {
   width: 100%;
   max-width: none;
-  padding-inline: max(14px, calc((100vw - 1120px) / 2));
+  padding-inline: max(14px, calc((100% - 1120px) / 2));
   background: linear-gradient(135deg, rgba(11, 123, 120, 0.11), rgba(23, 105, 224, 0.08));
 }
 
@@ -704,11 +719,14 @@ body.dark .care-card {
 }
 
 .footer-signature::before {
-  content: "";
-  display: block;
+  content: none;
+  display: none;
+}
+
+.footer-divider {
   width: min(620px, 80vw);
   height: 2px;
-  margin: 0 auto 16px;
+  margin: 22px auto 0;
   border-radius: 999px;
   background: linear-gradient(90deg, transparent, rgba(18, 48, 51, 0.48), rgba(217, 164, 65, 0.72), transparent);
   box-shadow: 0 0 16px rgba(217, 164, 65, 0.18);
@@ -791,7 +809,7 @@ body.dark .care-card {
 .album-viewer {
   position: relative;
   z-index: 1;
-  width: min(960px, 100vw);
+  width: min(960px, 100%);
   max-height: min(90vh, 840px);
   margin-inline: auto;
   overflow: auto;
@@ -804,7 +822,11 @@ body.dark .care-card {
 }
 
 .workspace-enter .workspace-panel {
-  animation: workspaceIdentity 300ms ease both;
+  animation: workspaceFade 160ms ease-out both;
+}
+
+.hero {
+  padding-top: 84px;
 }
 
 .close-button {
@@ -967,6 +989,23 @@ body.dark .care-card {
   color: var(--muted);
 }
 
+.hospital-location {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  margin-top: 10px;
+  padding: 7px 11px;
+  border: 1px solid rgba(23, 105, 224, .22);
+  border-radius: 999px;
+  color: var(--primary);
+  background: var(--sky);
+  font-size: .84rem;
+  font-weight: 900;
+  transition: transform 180ms ease, background 180ms ease;
+}
+
+.hospital-location:hover { transform: translateY(-2px); background: rgba(23, 105, 224, .13); }
+
 .price-row {
   display: grid;
   gap: 6px;
@@ -1120,7 +1159,7 @@ body.dark .care-card {
 
 @media (max-width: 430px) {
   :root {
-    --container: min(100vw - 20px, 1120px);
+    --container: min(1120px, calc(100% - 20px));
   }
 
   body {
@@ -1254,6 +1293,11 @@ body.dark .care-card {
   to { opacity: 1; transform: translateY(0) scale(1); }
 }
 
+@keyframes workspaceFade {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
 @keyframes ticker {
   from { transform: translateX(0); }
   to { transform: translateX(50%); }
@@ -1379,7 +1423,7 @@ body.dark .care-card {
 .assistant-dialog {
   position: relative;
   z-index: 1;
-  width: min(780px, calc(100vw - 24px));
+  width: min(780px, calc(100% - 24px));
   max-height: 92vh;
   overflow: hidden;
   border-radius: var(--radius-lg);
@@ -1414,7 +1458,7 @@ body.dark .care-card {
 
 .footer-signature {
   display: grid;
-  width: min(680px, calc(100vw - 28px));
+  width: min(680px, calc(100% - 28px));
   gap: 3px;
   margin: 8px auto 24px;
   padding: 16px 18px 18px;
@@ -1784,13 +1828,13 @@ body.dark .care-card {
 .audio-float:not(.is-playing) .audio-wave i { animation-play-state: paused; transform: scaleY(.55); }
 
 .workspace.workspace-fullscreen { align-items: stretch; padding: 0; }
-.workspace.workspace-fullscreen .workspace-panel { width: 100vw; max-width: none; max-height: 100vh; margin: 0; padding: 0 0 28px; border-radius: 0; background: var(--bg); }
+.workspace.workspace-fullscreen .workspace-panel { width: 100%; max-width: none; max-height: 100vh; margin: 0; padding: 0 0 28px; border-radius: 0; background: var(--bg); }
 .workspace.workspace-fullscreen .workspace-panel > .close-button { position: fixed; top: 14px; left: 14px; z-index: 7; }
-.full-screen-topbar { position: sticky; top: 0; z-index: 4; min-height: 64px; padding: 10px max(18px, calc((100vw - 1180px) / 2)); display: flex; align-items: center; justify-content: space-between; color: #fff; background: linear-gradient(115deg, #102d35, #0b7b78 55%, #1769e0); box-shadow: 0 10px 28px rgba(5,41,49,.19); font-weight: 900; }
+.full-screen-topbar { position: sticky; top: 0; z-index: 4; min-height: 64px; padding: 10px max(18px, calc((100% - 1180px) / 2)); display: flex; align-items: center; justify-content: space-between; color: #fff; background: linear-gradient(115deg, #102d35, #0b7b78 55%, #1769e0); box-shadow: 0 10px 28px rgba(5,41,49,.19); font-weight: 900; }
 .full-screen-topbar .back-action { min-height: 38px; padding: 0 13px; color: #fff; border-color: rgba(255,255,255,.36); background: rgba(255,255,255,.12); }
 
 .vaccine-guide,
-.dentistry-sheet { width: min(1180px, calc(100vw - 28px)); margin: 0 auto; padding: 28px 0; }
+.dentistry-sheet { width: min(1180px, calc(100% - 28px)); margin: 0 auto; padding: 28px 0; }
 .vaccine-guide-hero,
 .dentistry-hero { position: relative; overflow: hidden; margin: 4px 0 18px; padding: clamp(22px, 5vw, 52px); border-radius: 26px; color: #fff; background: radial-gradient(circle at 86% 18%, rgba(255,255,255,.25), transparent 18%), linear-gradient(130deg, #0b7b78, #1769e0); box-shadow: 0 20px 48px rgba(10, 96, 123, .24); }
 .dentistry-hero { background: radial-gradient(circle at 12% 20%, rgba(255,255,255,.24), transparent 19%), linear-gradient(130deg, #182e43, #0b7b78 48%, #d9a441); }
@@ -1814,7 +1858,7 @@ body.dark .care-card {
 @keyframes premiumCardGlow { 0%,100%{box-shadow:0 12px 30px rgba(16,45,43,.08)} 50%{box-shadow:0 15px 35px rgba(16,45,43,.12),0 0 20px rgba(23,105,224,.09)} }
 
 @media (max-width: 620px) {
-  .official-decision-card { grid-template-columns:auto 1fr; gap:12px; }.decision-view { grid-column:1 / -1; text-align:center; }.vaccine-detail > div { grid-template-columns:1fr; }.vaccine-guide,.dentistry-sheet { width:min(100vw - 20px, 1180px); padding:18px 0; }.workspace.workspace-fullscreen .workspace-panel > .close-button { top:76px; }
+  .official-decision-card { grid-template-columns:auto 1fr; gap:12px; }.decision-view { grid-column:1 / -1; text-align:center; }.vaccine-detail > div { grid-template-columns:1fr; }.vaccine-guide,.dentistry-sheet { width:min(1180px, calc(100% - 20px)); padding:18px 0; }.workspace.workspace-fullscreen .workspace-panel > .close-button { top:76px; }
 }
 
 /* Family celebration and full portrait photographs */
@@ -1863,7 +1907,7 @@ body.dark .care-card {
 .balloon-three { top: 58px; left: 24%; width: 23px; height: 30px; background: linear-gradient(135deg, #effdff, #74d8db); animation-delay: -5.1s; }
 .family-confetti { position:absolute; z-index:1; color:#fff6b7; font-style:normal; text-shadow:0 0 8px rgba(255,255,255,.7); animation: familyConfetti 4s ease-in-out infinite; }.confetti-one { top: 27px; left: 11%; }.confetti-two { right: 29%; bottom: 25px; color:#fff; animation-delay:-1.5s; }.confetti-three { right: 7%; bottom: 35px; color:#ffe5f4; animation-delay:-2.8s; }
 
-.album-viewer { width: min(100vw - 18px, 1000px); max-height: 96vh; padding: 10px; }
+.album-viewer { width: min(100%, 1000px); max-height: 96vh; padding: 10px; }
 .album-stage { width: min(100%, 940px); height: min(84vh, 820px); max-height: calc(100vh - 78px); padding: 4px; }
 .album-viewer img { width: auto; height: auto; max-width: calc(100% - 12px); max-height: calc(100% - 12px); padding: 8px 8px 28px; object-fit: contain; object-position: center center; }
 .album-stage.is-portrait { height: min(88vh, 900px); max-height: calc(100vh - 64px); }
@@ -1898,7 +1942,7 @@ body.dark .care-card {
 }
 
 @media (max-width: 620px) {
-  .album-viewer { width:100vw; max-height:100vh; padding:5px; border-radius:0; }
+  .album-viewer { width:100%; max-height:100vh; padding:5px; border-radius:0; }
   .album-stage,.album-stage.is-portrait { height:calc(100vh - 60px); max-height:calc(100vh - 60px); }
   .album-stage.is-portrait img { max-width:calc(100% - 8px); }
 }
@@ -2000,6 +2044,116 @@ body.dark .care-card {
 .marriage-pdf-link { color: var(--primary); font-size: .88rem; font-weight: 900; text-decoration: underline; text-underline-offset: 4px; }
 .pdf-action { gap: 7px; }
 
+/* Mobile viewport guard: no element may widen the page outside the device. */
+.app-shell,
+main,
+.section,
+.workspace,
+.workspace-panel,
+.assistant-modal,
+.album-modal {
+  max-width: 100%;
+}
+
+.footer-signature .review-line {
+  display: block;
+  white-space: nowrap;
+  font-size: clamp(.67rem, 3.25vw, .89rem);
+  letter-spacing: 0;
+}
+
+/* Dark is the default visual language: high contrast, not white on grey. */
+body.dark {
+  background: radial-gradient(circle at 80% 0%, rgba(23, 105, 224, .15), transparent 32%), linear-gradient(180deg, #071c24, #041419 62%, #061b20);
+}
+
+body.dark .topbar {
+  border-color: rgba(121, 234, 224, .3);
+  background: rgba(6, 27, 32, .9);
+  box-shadow: 0 13px 34px rgba(0, 0, 0, .32), 0 0 18px rgba(88, 217, 204, .1);
+}
+
+body.dark .unit-card,
+body.dark .news-card,
+body.dark .gallery-card,
+body.dark .service-card,
+body.dark .info-block,
+body.dark .quick-card,
+body.dark .advice-lead,
+body.dark .video-card,
+body.dark .hospital-card,
+body.dark .price-row,
+body.dark .vaccine-details,
+body.dark .dental-results {
+  background: linear-gradient(145deg, rgba(13, 42, 49, .98), rgba(8, 30, 37, .98));
+  border-color: rgba(121, 234, 224, .18);
+}
+
+body.dark .unit-card p,
+body.dark .service-card p,
+body.dark .news-card p,
+body.dark .hospital-card p,
+body.dark .heading-guidance,
+body.dark .section-head p:not(.eyebrow) { color: #bdd2d5; }
+body.dark .footer-signature { background: linear-gradient(145deg, rgba(13,42,49,.98), rgba(7,27,32,.98)); border-color: rgba(217,164,65,.34); }
+body.dark .footer-signature .rights-line { color: #e6f0ef; }
+body.dark .footer-divider { background: linear-gradient(90deg, transparent, rgba(88,217,204,.42), rgba(217,164,65,.86), rgba(88,217,204,.42), transparent); box-shadow: 0 0 18px rgba(217,164,65,.24); }
+body.dark .hospital-location { color: #b9f7ef; background: rgba(23, 105, 224, .16); border-color: rgba(121,234,224,.28); }
+body.dark .hospital-location:hover { background: rgba(88, 217, 204, .2); }
+
+.gateway-head {
+  position: relative;
+  overflow: hidden;
+  padding: clamp(18px, 4vw, 30px);
+  border: 1px solid rgba(23, 105, 224, .22);
+  border-radius: 22px;
+  background: linear-gradient(135deg, rgba(255,255,255,.85), rgba(234,247,255,.72));
+  box-shadow: 0 14px 32px rgba(16, 45, 43, .1), inset 0 1px 0 rgba(255,255,255,.9);
+}
+
+.gateway-head::before {
+  content: "";
+  position: absolute;
+  inset: -70% -35%;
+  background: linear-gradient(115deg, transparent 43%, rgba(255,255,255,.72) 50%, transparent 57%);
+  transform: translateX(-55%) rotate(10deg);
+  animation: gatewaySweep 5.6s ease-in-out infinite;
+  pointer-events: none;
+}
+
+.gateway-head > * { position: relative; z-index: 1; }
+.gateway-head h1,.gateway-head h2 { margin: 4px 0 2px; color: var(--primary); text-shadow: 0 0 18px rgba(23, 105, 224, .15); }
+body.dark .gateway-head { border-color: rgba(121,234,224,.3); background: linear-gradient(135deg, rgba(9,43,52,.98), rgba(11,31,51,.96)); box-shadow: 0 16px 36px rgba(0,0,0,.24), 0 0 24px rgba(23,105,224,.13); }
+body.dark .gateway-head h1,body.dark .gateway-head h2 { color: #e5fffb; text-shadow: 0 0 14px rgba(88,217,204,.42); }
+body.dark .gateway-head::before { background: linear-gradient(115deg, transparent 43%, rgba(121,234,224,.17) 50%, transparent 57%); }
+
+@keyframes gatewaySweep { 0%, 70%, 100% { transform: translateX(-55%) rotate(10deg); opacity: 0; } 18%, 42% { opacity: 1; } 55% { transform: translateX(55%) rotate(10deg); opacity: 0; } }
+
 @keyframes marriageFrame { 0%,100% { opacity: .45; transform: scale(.985); } 50% { opacity: 1; transform: scale(1); } }
 @keyframes marriageGlow { 0%,100% { transform: scale(1); } 50% { transform: scale(1.07); } }
 @keyframes marriageArrow { 0%,100% { transform: translateY(0); } 50% { transform: translateY(5px); } }
+
+/* Official references and maps: prominent, contained, and mobile-safe. */
+.official-source-documents { position:relative; isolation:isolate; display:grid; grid-template-columns:auto minmax(0,1fr) auto; gap:14px; padding:18px; overflow:hidden; border:1px solid rgba(217,164,65,.62); background:linear-gradient(125deg, rgba(255,252,238,.98), rgba(235,248,255,.94)); box-shadow:0 14px 34px rgba(142,101,14,.18), inset 0 0 0 4px rgba(217,164,65,.08); }.official-source-documents::before { content:""; position:absolute; z-index:-1; inset:-65% -35%; background:linear-gradient(105deg, transparent 45%, rgba(255,255,255,.9) 50%, transparent 55%); animation:officialSweep 4.8s ease-in-out infinite; }.source-documents-seal { width:54px; height:54px; display:grid; place-items:center; border-radius:50%; color:#fff9df; background:linear-gradient(135deg,#665020,#d9a441); box-shadow:0 0 0 5px rgba(217,164,65,.13),0 0 22px rgba(217,164,65,.42); font-size:1.55rem; animation:officialSealGlow 2.8s ease-in-out infinite; }.official-source-documents p { margin:0 0 3px; color:#70521c; }.official-source-documents strong,.official-source-documents small { display:block; }.official-source-documents strong { color:#273b3e; font-size:1.03rem; }.official-source-documents small { margin-top:3px; color:#5f6766; font-weight:750; }.source-document-links { display:flex; flex-wrap:wrap; gap:8px; align-items:center; }.official-source-documents a { color:#fff; background:linear-gradient(135deg,#7b5a18,#c58e20); box-shadow:0 7px 15px rgba(141,100,18,.18); transition:transform .2s ease, box-shadow .2s ease; }.official-source-documents a:hover { transform:translateY(-2px); box-shadow:0 10px 22px rgba(141,100,18,.28); }
+.guide-actions { margin-top:20px; justify-content:center; }.map-sheet { max-width:900px; margin-inline:auto; }.unit-map-wrap { overflow:hidden; min-height:360px; border:1px solid var(--line); border-radius:20px; background:var(--surface-strong); box-shadow:var(--shadow); }.unit-map-frame { display:block; width:100%; height:clamp(340px, 56vh, 540px); max-width:none; border:0; }.map-actions { justify-content:center; }.location-directions { gap:7px; }
+body.dark .official-source-documents { border-color:rgba(217,164,65,.55); background:linear-gradient(125deg, rgba(45,38,21,.98), rgba(18,49,57,.97)); } body.dark .official-source-documents strong { color:#fff7dc; } body.dark .official-source-documents small { color:#d1e2df; } body.dark .official-source-documents p { color:#f1cc76; }
+@keyframes officialSweep { 0%,68%,100% { opacity:0; transform:translateX(-54%) rotate(10deg); } 18%,42% { opacity:1; } 56% { opacity:0; transform:translateX(54%) rotate(10deg); } } @keyframes officialSealGlow { 0%,100% { box-shadow:0 0 0 5px rgba(217,164,65,.13),0 0 18px rgba(217,164,65,.34); } 50% { box-shadow:0 0 0 7px rgba(217,164,65,.18),0 0 30px rgba(217,164,65,.58); } }
+@media (max-width:620px) { .official-source-documents { grid-template-columns:auto minmax(0,1fr); }.source-document-links { grid-column:1 / -1; }.source-document-links a { flex:1 1 135px; text-align:center; }.unit-map-wrap { min-height:300px; } }
+
+/* Prevent decorative motion or long labels from creating lateral page movement. */
+html,
+body,
+.app-shell,
+main,
+.workspace-panel,
+.service-sheet,
+.sheet-header,
+.services-list,
+.info-grid,
+.sheet-actions,
+.official-source-documents {
+  min-width: 0;
+  max-width: 100%;
+  overflow-x: clip;
+  overscroll-behavior-x: none;
+}
